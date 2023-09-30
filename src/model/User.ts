@@ -11,6 +11,7 @@ export default class User{
         this.id = uuidv4();
         this.name = name;
         this.username = username;
+        this.technologies = [];
     }
 
     public addTech(tech: Technology){
@@ -25,10 +26,12 @@ export default class User{
             technologies: this.technologies
         };
     }
-
     
     public getUsername(): string {
         return this.username;
     }
     
+    public getTechs() {
+        return this.technologies;    
+    }
 }

@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkExistsUserAccount = exports.listUsers = exports.addUser = void 0;
-const User_1 = __importDefault(require("./User"));
+const User_1 = __importDefault(require("../model/User"));
 const erroUserExists = {
     error: 'User exists'
 };

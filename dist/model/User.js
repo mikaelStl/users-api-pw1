@@ -6,6 +6,7 @@ class User {
         this.id = (0, uuid_1.v4)();
         this.name = name;
         this.username = username;
+        this.technologies = [];
     }
     addTech(tech) {
         this.technologies.push(tech);
@@ -20,6 +21,9 @@ class User {
     }
     getUsername() {
         return this.username;
+    }
+    getTechs() {
+        return this.technologies;
     }
 }
 exports.default = User;
