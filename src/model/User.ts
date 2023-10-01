@@ -2,7 +2,7 @@ import { v4 as uuidv4} from 'uuid';
 import Technology from './Technology';
 
 export default class User{
-    private id!: string; //Não encontrei bibliotecas que trabalhassem com tipagem explicita
+    private id!: string;
     private name!: string;
     private username!: string;
     private technologies!: Technology[];

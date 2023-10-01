@@ -9,15 +9,20 @@ const users: User[] = [];
 
 //MIDDLEWARES
 function checkExistsUserAccount (req: Request, res: Response, next: NextFunction) {
-    const { username } = req.body || req.headers;
-    
+    const { username } = req.body || req.headers;    
+
     const exists = users.find( user => username === user.getUsername());
     if (exists) {
         return res.status(400).send(erroUserExists);
-    } else {
+    } else {        
         // res.status(200).send(exists);
         return next();
     }
+}
+
+function getUserByUsername(req: Request, res: Response, next: NextFunction) {
+    const { username } = req.body || req.headers;
+
 }
 
 function addUser(req: Request, res: Response) {
@@ -31,4 +36,4 @@ function listUsers(req: Request, res: Response): any {
     res.status(200).send(users);
 }
 
-export { addUser,/*  findUser, */ listUsers, checkExistsUserAccount }
+export { addUser,/*  findUser, */ listUsers, checkExistsUserAccount, users }
