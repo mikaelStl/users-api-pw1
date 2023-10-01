@@ -1,39 +1,44 @@
+/// <reference path="../typings/custom.d.ts" />
+
 import { Request, Response, NextFunction } from 'express';
 import User from '../model/User';
 
 const erroUserExists = {
-    error: 'User exists'
+  error: 'User exists'
 }
 
 const users: User[] = [];
 
 //MIDDLEWARES
-function checkExistsUserAccount (req: Request, res: Response, next: NextFunction) {
-    const { username } = req.body || req.headers;    
+function checkExistsUserAccount(req: Request, res: Response, next: NextFunction) {
+  const { username } = req.body || req.headers || req.params;
 
-    const exists = users.find( user => username === user.getUsername());
-    if (exists) {
-        return res.status(400).send(erroUserExists);
-    } else {        
-        // res.status(200).send(exists);
-        return next();
-    }
+  const exists = users.find(user => username === user.getUsername());
+  if (exists) {
+    req.user = exists;
+    
+    return res.status(400).send(erroUserExists);
+  } else {
+      // res.status(200).send(exists);
+    return next();
+  }
 }
 
-function getUserByUsername(req: Request, res: Response, next: NextFunction) {
-    const { username } = req.body || req.headers;
-
-}
-
+//CONTROLLERS
 function addUser(req: Request, res: Response) {
-    const user = new User(req.body.name, req.body.username);
+  const user = new User(req.body.name, req.body.username);
 
-    users.push(user);
-    return res.status(201).send(user.toJSON());
+  users.push(user);
+  return res.status(201).send(user.toJSON());
 }
 
 function listUsers(req: Request, res: Response): any {
-    res.status(200).send(users);
+  res.status(200).send(users);
 }
 
-export { addUser,/*  findUser, */ listUsers, checkExistsUserAccount, users }
+function findUser(req: Request, res: Response){
+  
+  res.status(200);
+}
+
+export { addUser, findUser, listUsers, checkExistsUserAccount, users }
