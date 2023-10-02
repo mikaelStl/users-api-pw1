@@ -16,9 +16,11 @@ app.post('/users', User_controller_1.checkExistsUserAccount, User_controller_1.a
 app.get('/users', User_controller_1.listUsers);
 /* TECHNOLOGIES */
 //CREATE
-app.post('/technologies', User_controller_1.findUserByUsername, User_controller_1.addTech);
+app.post('/technologies', User_controller_1.getUserByUsername, User_controller_1.addTech);
 //READ
-app.get('/technologies', User_controller_1.findUserByUsername, User_controller_1.listTech);
+app.get('/technologies', User_controller_1.getUserByUsername, User_controller_1.listTech);
+//UPDATE
+app.put('/technologies/:id', User_controller_1.getUserByUsername, User_controller_1.updateTitleDeadline);
 app.listen(PORT, () => {
     console.log(`APP RUNNING IN PORT ${PORT}`);
 });

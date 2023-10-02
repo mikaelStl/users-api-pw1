@@ -14,4 +14,13 @@ export default class Technology {
     this.deadline = new Date(deadline);
     this.created_at = new Date();
   }
+
+  public update(title: string, deadline: string){
+    this.title = title;
+    this.deadline = new Date(deadline);
+  }
+
+  public getID() {
+    return this.id;    
+  }
 }

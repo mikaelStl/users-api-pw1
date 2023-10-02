@@ -9,5 +9,12 @@ class Technology {
         this.deadline = new Date(deadline);
         this.created_at = new Date();
     }
+    update(title, deadline) {
+        this.title = title;
+        this.deadline = new Date(deadline);
+    }
+    getID() {
+        return this.id;
+    }
 }
 exports.default = Technology;

@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findUserByUsername = exports.checkExistsUserAccount = exports.listTech = exports.addTech = exports.listUsers = exports.addUser = void 0;
+exports.getUserByUsername = exports.checkExistsUserAccount = exports.updateTitleDeadline = exports.listTech = exports.addTech = exports.listUsers = exports.addUser = void 0;
 const User_1 = __importDefault(require("../model/User"));
 const Technology_1 = __importDefault(require("../model/Technology"));
 const erroUserExists = {
@@ -12,7 +12,7 @@ const erroUserExists = {
 };
 const users = [];
 //MIDDLEWARES
-function findUserByUsername(req, res, next) {
+function getUserByUsername(req, res, next) {
     const { username } = req.headers;
     const user = users.find(user => username === user.getUsername());
     if (user) {
@@ -23,7 +23,7 @@ function findUserByUsername(req, res, next) {
         return res.status(404).send('NOT FOUND');
     }
 }
-exports.findUserByUsername = findUserByUsername;
+exports.getUserByUsername = getUserByUsername;
 function checkExistsUserAccount(req, res, next) {
     const { username } = req.body;
     const exists = users.find(user => username === user.getUsername());
@@ -35,6 +35,15 @@ function checkExistsUserAccount(req, res, next) {
     }
 }
 exports.checkExistsUserAccount = checkExistsUserAccount;
+function getTechByID(id, user) {
+    const tech = user.getTechs().find(tech => id === tech.getID());
+    if (tech) {
+        return tech;
+    }
+    else {
+        return false;
+    }
+}
 //CONTROLLERS
 function addUser(req, res) {
     const user = new User_1.default(req.body.name, req.body.username);
@@ -56,3 +65,16 @@ function addTech(req, res) {
     res.status(201).send('CREATED');
 }
 exports.addTech = addTech;
+function updateTitleDeadline(req, res) {
+    const { id } = req.params;
+    const { title, deadline } = req.body;
+    const tech = getTechByID(id, req.user);
+    if (tech) {
+        tech.update(title, deadline);
+        res.send('SUCESSES!');
+    }
+    else {
+        res.status(404).send('NOT FOUND');
+    }
+}
+exports.updateTitleDeadline = updateTitleDeadline;

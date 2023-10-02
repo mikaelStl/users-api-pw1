@@ -11,7 +11,7 @@ const erroUserExists = {
 const users: User[] = [];
 
 //MIDDLEWARES
-function findUserByUsername(req: Request, res: Response, next: NextFunction) {
+function getUserByUsername(req: Request, res: Response, next: NextFunction) {
   const { username } = req.headers;
 
   const user = users.find(user => username === user.getUsername());
@@ -32,6 +32,16 @@ function checkExistsUserAccount(req: Request, res: Response, next: NextFunction)
     return res.status(400).send(erroUserExists);
   } else {
     return next();
+  }
+}
+
+function getTechByID(id: string, user: User) {  
+  const tech = user.getTechs().find( tech => id === tech.getID());
+
+  if (tech) {
+    return tech;
+  } else {
+    return false;
   }
 }
 
@@ -59,4 +69,18 @@ function addTech(req: Request, res: Response) {
   res.status(201).send('CREATED');
 }
 
-export { addUser, listUsers, addTech, listTech, checkExistsUserAccount, findUserByUsername }
+function updateTitleDeadline(req: Request, res: Response) {
+  const { id } = req.params;
+  const { title, deadline } = req.body;
+
+  const tech = getTechByID(id, req.user);
+
+  if (tech) {
+    tech.update(title, deadline)
+    res.send('SUCESSES!');
+  } else {
+    res.status(404).send('NOT FOUND');
+  }
+}
+
+export { addUser, listUsers, addTech, listTech, updateTitleDeadline, checkExistsUserAccount, getUserByUsername }
