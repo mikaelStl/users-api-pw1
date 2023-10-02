@@ -4,23 +4,33 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.users = exports.checkExistsUserAccount = exports.listUsers = exports.findUser = exports.addUser = void 0;
+exports.findUserByUsername = exports.checkExistsUserAccount = exports.listTech = exports.addTech = exports.listUsers = exports.addUser = void 0;
 const User_1 = __importDefault(require("../model/User"));
+const Technology_1 = __importDefault(require("../model/Technology"));
 const erroUserExists = {
     error: 'User exists'
 };
 const users = [];
-exports.users = users;
 //MIDDLEWARES
+function findUserByUsername(req, res, next) {
+    const { username } = req.headers;
+    const user = users.find(user => username === user.getUsername());
+    if (user) {
+        req.user = user;
+        return next();
+    }
+    else {
+        return res.status(404).send('NOT FOUND');
+    }
+}
+exports.findUserByUsername = findUserByUsername;
 function checkExistsUserAccount(req, res, next) {
-    const { username } = req.body || req.headers || req.params;
+    const { username } = req.body;
     const exists = users.find(user => username === user.getUsername());
     if (exists) {
-        req.user = exists;
         return res.status(400).send(erroUserExists);
     }
     else {
-        // res.status(200).send(exists);
         return next();
     }
 }
@@ -36,7 +46,13 @@ function listUsers(req, res) {
     res.status(200).send(users);
 }
 exports.listUsers = listUsers;
-function findUser(req, res) {
-    res.status(200);
+function listTech(req, res) {
+    res.status(200).send(req.user.technologies);
 }
-exports.findUser = findUser;
+exports.listTech = listTech;
+function addTech(req, res) {
+    const tech = new Technology_1.default(req.body.title, req.body.deadline);
+    req.user.addTech(tech);
+    res.status(201).send('CREATED');
+}
+exports.addTech = addTech;

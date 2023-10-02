@@ -7,9 +7,9 @@ export default class Technology {
   private deadline!: Date;
   private created_at!: Date;
 
-  constructor(name: string, deadline: string) {
+  constructor(title: string, deadline: string) {
     this.id = uuidv4();
-    this.title = name;
+    this.title = title;
     this.done = false;
     this.deadline = new Date(deadline);
     this.created_at = new Date();

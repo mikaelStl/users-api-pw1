@@ -14,7 +14,11 @@ app.use(express_1.default.json());
 app.post('/users', User_controller_1.checkExistsUserAccount, User_controller_1.addUser);
 //READ
 app.get('/users', User_controller_1.listUsers);
-app.get('/users/:username', User_controller_1.checkExistsUserAccount, User_controller_1.findUser);
+/* TECHNOLOGIES */
+//CREATE
+app.post('/technologies', User_controller_1.findUserByUsername, User_controller_1.addTech);
+//READ
+app.get('/technologies', User_controller_1.findUserByUsername, User_controller_1.listTech);
 app.listen(PORT, () => {
     console.log(`APP RUNNING IN PORT ${PORT}`);
 });
