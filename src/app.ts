@@ -1,7 +1,8 @@
 /// <reference path="./typings/custom.d.ts" />
 
 import express from 'express';
-import { addUser, listUsers,addTech , listTech, checkExistsUserAccount, getUserByUsername, updateTitleDeadline, doneTech, deleteTech } from './controller/User.controller';
+import { addUser, listUsers, checkExistsUserAccount, getUserByUsername } from './controller/User.controller';
+import { addTech, listTech, updateTitleDeadline, doneTech, deleteTech } from './controller/Technology.controller';
 
 const PORT = 3000;
 
