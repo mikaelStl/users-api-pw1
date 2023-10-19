@@ -1,8 +1,7 @@
 /// <reference path="./typings/custom.d.ts" />
 
-import express, { NextFunction, Request, Response } from 'express';
-import { addUser, listUsers,addTech , listTech, checkExistsUserAccount, getUserByUsername, updateTitleDeadline } from './controller/User.controller';
-import Technology from './model/Technology';
+import express from 'express';
+import { addUser, listUsers,addTech , listTech, checkExistsUserAccount, getUserByUsername, updateTitleDeadline, doneTech, deleteTech } from './controller/User.controller';
 
 const PORT = 3000;
 
@@ -25,6 +24,11 @@ app.get('/technologies', getUserByUsername, listTech);
 
 //UPDATE
 app.put('/technologies/:id', getUserByUsername, updateTitleDeadline);
+
+app.patch('/technologies/:id/studied', getUserByUsername, doneTech);
+
+//DELETE
+app.delete('/technologies/:id', getUserByUsername, deleteTech);
 
 app.listen(PORT, () => {
   console.log(`APP RUNNING IN PORT ${PORT}`);

@@ -21,6 +21,9 @@ app.post('/technologies', User_controller_1.getUserByUsername, User_controller_1
 app.get('/technologies', User_controller_1.getUserByUsername, User_controller_1.listTech);
 //UPDATE
 app.put('/technologies/:id', User_controller_1.getUserByUsername, User_controller_1.updateTitleDeadline);
+app.patch('/technologies/:id/studied', User_controller_1.getUserByUsername, User_controller_1.doneTech);
+//DELETE
+app.delete('/technologies/:id', User_controller_1.getUserByUsername, User_controller_1.deleteTech);
 app.listen(PORT, () => {
     console.log(`APP RUNNING IN PORT ${PORT}`);
 });

@@ -5,9 +5,12 @@ class Technology {
     constructor(title, deadline) {
         this.id = (0, uuid_1.v4)();
         this.title = title;
-        this.done = false;
+        this.studied = false;
         this.deadline = new Date(deadline);
         this.created_at = new Date();
+    }
+    done() {
+        this.studied = true;
     }
     update(title, deadline) {
         this.title = title;

@@ -5,7 +5,13 @@ import User from '../model/User';
 import Technology from '../model/Technology';
 
 const erroUserExists = {
-  error: 'User exists'
+  error: 'USER EXISTS'
+}
+const erroUserNotExists = {
+  error: 'USER NOT EXISTS'
+}
+const erroTechNotExists = {
+  error: 'TECHNOLOGY NOT EXISTS'
 }
 
 const users: User[] = [];
@@ -20,7 +26,7 @@ function getUserByUsername(req: Request, res: Response, next: NextFunction) {
     req.user = user;
     return next();
   } else {
-    return res.status(404).send('NOT FOUND');
+    return res.status(404).send(erroUserNotExists);
   }
 }
 
@@ -69,7 +75,7 @@ function addTech(req: Request, res: Response) {
   res.status(201).send('CREATED');
 }
 
-function updateTitleDeadline(req: Request, res: Response) {
+function updateTitleDeadline(req: Request, res: Response) {   
   const { id } = req.params;
   const { title, deadline } = req.body;
 
@@ -77,10 +83,37 @@ function updateTitleDeadline(req: Request, res: Response) {
 
   if (tech) {
     tech.update(title, deadline)
-    res.send('SUCESSES!');
+    res.status(200).send('SUCCESS!');
   } else {
-    res.status(404).send('NOT FOUND');
+    res.status(404).send(erroTechNotExists);
   }
 }
 
-export { addUser, listUsers, addTech, listTech, updateTitleDeadline, checkExistsUserAccount, getUserByUsername }
+function doneTech(req: Request, res: Response) {
+  const { id } = req.params;
+
+  const tech = getTechByID(id, req.user);
+
+  if (tech) {
+    tech.done();
+    res.status(200).send('FINISHED!');
+  } else {
+    res.status(404).send(erroTechNotExists);
+  }
+}
+
+function deleteTech(req: Request, res: Response) {
+  const { id } = req.params;
+
+  const user = req.user;
+  const tech = getTechByID(id, req.user);
+
+  if (tech) {
+    user.getTechs().splice(user.getTechs().indexOf(tech, 0), 1)
+    res.status(200).send('DELETED!');
+  } else {
+    res.status(404).send(erroTechNotExists);
+  }
+}
+
+export { addUser, listUsers, addTech, listTech, updateTitleDeadline, doneTech, deleteTech, checkExistsUserAccount, getUserByUsername }
