@@ -1,69 +1,141 @@
 "use strict";
-/// <reference path="../typings/custom.d.ts" />
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+/// <reference path="../typings/express.d.ts" />
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteTech = exports.doneTech = exports.updateTitleDeadline = exports.listTech = exports.addTech = void 0;
-const Technology_1 = __importDefault(require("../model/Technology"));
-const erroTechNotExists = {
-    error: 'TECHNOLOGY NOT EXISTS'
-};
-function getTechByID(id, user) {
-    const tech = user.getTechs().find(tech => id === tech.getID());
-    if (tech) {
-        return tech;
+const prisma_client_1 = require("../database/prisma.client");
+class TechHandler {
+    static list(user) {
+        return __awaiter(this, void 0, void 0, function* () {
+            user;
+            try {
+                const techs = yield prisma_client_1.prisma.technology.findMany({
+                    where: {
+                        userId: user.id
+                    }
+                });
+                return {
+                    status: 200,
+                    message: techs
+                };
+            }
+            catch (error) {
+                return {
+                    status: 400,
+                    message: error
+                };
+            }
+        });
     }
-    else {
-        return false;
+    static create(infos, user) {
+        return __awaiter(this, void 0, void 0, function* () {
+            user;
+            try {
+                const tech = yield prisma_client_1.prisma.technology.create({
+                    data: {
+                        title: infos.title,
+                        deadline: new Date(infos.deadline),
+                        userId: user.id
+                    }
+                });
+                return {
+                    status: 201,
+                    message: "CREATED!"
+                };
+            }
+            catch (error) {
+                return {
+                    status: 400,
+                    message: error
+                };
+            }
+        });
+    }
+    static delete(data, user) {
+        return __awaiter(this, void 0, void 0, function* () {
+            user;
+            const { id } = data;
+            try {
+                yield prisma_client_1.prisma.technology.delete({
+                    where: {
+                        id: id,
+                        userId: user.id
+                    }
+                });
+                return {
+                    status: 200,
+                    message: 'DELETED!'
+                };
+            }
+            catch (error) {
+                return {
+                    status: 400,
+                    message: error
+                };
+            }
+        });
+    }
+    static update(tech, user, infos) {
+        return __awaiter(this, void 0, void 0, function* () {
+            tech;
+            user;
+            try {
+                const t = yield prisma_client_1.prisma.technology.update({
+                    where: {
+                        id: tech.id,
+                        userId: user.id
+                    },
+                    data: {
+                        title: infos.title,
+                        deadline: new Date(infos.deadline)
+                    }
+                });
+                return {
+                    status: 200,
+                    message: "MODIFIED!"
+                };
+            }
+            catch (error) {
+                return {
+                    status: 400,
+                    message: error
+                };
+            }
+        });
+    }
+    static done(tech, user) {
+        return __awaiter(this, void 0, void 0, function* () {
+            tech;
+            user;
+            try {
+                yield prisma_client_1.prisma.technology.update({
+                    where: {
+                        id: tech.id,
+                        userId: user.id
+                    },
+                    data: {
+                        studied: true
+                    }
+                });
+                return {
+                    status: 200,
+                    message: "DONE!"
+                };
+            }
+            catch (error) {
+                return {
+                    status: 400,
+                    message: error
+                };
+            }
+        });
     }
 }
-//CONTROLLERS
-function listTech(req, res) {
-    res.status(200).send(req.user.technologies);
-}
-exports.listTech = listTech;
-function addTech(req, res) {
-    const tech = new Technology_1.default(req.body.title, req.body.deadline);
-    req.user.addTech(tech);
-    res.status(201).send('CREATED');
-}
-exports.addTech = addTech;
-function updateTitleDeadline(req, res) {
-    const { id } = req.params;
-    const { title, deadline } = req.body;
-    const tech = getTechByID(id, req.user);
-    if (tech) {
-        tech.update(title, deadline);
-        res.status(200).send('SUCCESS!');
-    }
-    else {
-        res.status(404).send(erroTechNotExists);
-    }
-}
-exports.updateTitleDeadline = updateTitleDeadline;
-function doneTech(req, res) {
-    const { id } = req.params;
-    const tech = getTechByID(id, req.user);
-    if (tech) {
-        tech.done();
-        res.status(200).send('FINISHED!');
-    }
-    else {
-        res.status(404).send(erroTechNotExists);
-    }
-}
-exports.doneTech = doneTech;
-function deleteTech(req, res) {
-    const { id } = req.params;
-    const user = req.user;
-    const tech = getTechByID(id, req.user);
-    if (tech) {
-        user.getTechs().splice(user.getTechs().indexOf(tech, 0), 1);
-        res.status(200).send('DELETED!');
-    }
-    else {
-        res.status(404).send(erroTechNotExists);
-    }
-}
-exports.deleteTech = deleteTech;
+exports.default = TechHandler;

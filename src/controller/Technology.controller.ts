@@ -1,75 +1,132 @@
-/// <reference path="../typings/custom.d.ts" />
+/// <reference path="../typings/express.d.ts" />
 
-import { Request, Response, NextFunction } from 'express';
-import User from '../model/User';
-import Technology from '../model/Technology';
+import { prisma } from "../database/prisma.client";
+import { IResp, ITech, IUser } from "../interfaces/interfaces";
 
-const erroTechNotExists = {
-  error: 'TECHNOLOGY NOT EXISTS'
-}
+class TechHandler {
+  static async list(user: any) {
+    user as IUser;
+    try {
+      const techs = await prisma.technology.findMany({
+        where: {
+          userId: user.id
+        }
+      })
 
-function getTechByID(id: string, user: User) {  
-  const tech = user.getTechs().find( tech => id === tech.getID());
-
-  if (tech) {
-    return tech;
-  } else {
-    return false;
+      return {
+        status: 200,
+        message: techs
+      } as IResp;
+    } catch (error) {
+      return {
+        status: 400,
+        message: error
+      } as IResp;
+    }
   }
-}
 
-//CONTROLLERS
-function listTech(req: Request, res: Response){
-  res.status(200).send(req.user.technologies);
-}
+  static async create(infos: ITech, user: any) {
+    user as IUser;
+    try {
+      const tech = await prisma.technology.create({
+        data: {
+          title: infos.title,
+          deadline: new Date(infos.deadline),
+          userId: user.id
+        }
+      });
 
-function addTech(req: Request, res: Response) {
-  const tech = new Technology(req.body.title, req.body.deadline);
-
-  req.user.addTech(tech);
-
-  res.status(201).send('CREATED');
-}
-
-function updateTitleDeadline(req: Request, res: Response) {   
-  const { id } = req.params;
-  const { title, deadline } = req.body;
-
-  const tech = getTechByID(id, req.user);
-
-  if (tech) {
-    tech.update(title, deadline)
-    res.status(200).send('SUCCESS!');
-  } else {
-    res.status(404).send(erroTechNotExists);
+      return {
+        status: 201,
+        message: "CREATED!"
+      } as IResp
+    } catch (error) {
+      return {
+        status: 400,
+        message: error
+      } as IResp
+    }
   }
-}
 
-function doneTech(req: Request, res: Response) {
-  const { id } = req.params;
+  static async delete(data: any, user: any){
+    user as IUser;
 
-  const tech = getTechByID(id, req.user);
+    const { id } = data;
 
-  if (tech) {
-    tech.done();
-    res.status(200).send('FINISHED!');
-  } else {
-    res.status(404).send(erroTechNotExists);
+    try {
+      await prisma.technology.delete({
+        where: {
+          id: id,
+          userId: user.id
+        }
+      })
+
+      return {
+        status: 200,
+        message: 'DELETED!'
+      } as IResp;
+    } catch (error) {
+      return {
+        status: 400,
+        message: error
+      } as IResp;
+    }
   }
-}
 
-function deleteTech(req: Request, res: Response) {
-  const { id } = req.params;
+  static async update(tech: any, user: any, infos: { title: string, deadline: Date}){
+    tech as ITech;
+    user as IUser;
+    
+    try {
+      const t = await prisma.technology.update({
+        where: {
+          id: tech.id,
+          userId: user.id
+        },
+        data: {
+          title: infos.title,
+          deadline: new Date(infos.deadline)
+        }
+      });
 
-  const user = req.user;
-  const tech = getTechByID(id, req.user);
-
-  if (tech) {
-    user.getTechs().splice(user.getTechs().indexOf(tech, 0), 1)
-    res.status(200).send('DELETED!');
-  } else {
-    res.status(404).send(erroTechNotExists);
+      return {
+        status: 200,
+        message: "MODIFIED!"
+      } as IResp;
+    } catch (error) {
+      return {
+        status: 400,
+        message: error
+      } as IResp;
+    }
   }
+
+  static async done(tech: any, user: any){
+    tech as ITech;
+    user as IUser;
+
+    try {
+      await prisma.technology.update({
+        where: {
+          id: tech.id,
+          userId: user.id
+        },
+        data: {
+          studied: true
+        }
+      })
+
+      return {
+        status: 200,
+        message: "DONE!"
+      } as IResp;
+    } catch (error) {
+      return {
+        status: 400,
+        message: error
+      } as IResp;
+    }
+  } 
 }
 
-export { addTech, listTech, updateTitleDeadline, doneTech, deleteTech}
+export default TechHandler;

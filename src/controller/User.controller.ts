@@ -1,22 +1,11 @@
-/// <reference path="../typings/custom.d.ts" />
+/// <reference path="../typings/express.d.ts" />
 
-import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../database/prisma.client'
 
 import { IResp, IUser } from '../interfaces/interfaces'
 
-const erroUserExists = {
-  error: 'USER EXISTS'
-}
-const erroUserNotExists = {
-  error: 'USER NOT EXISTS'
-}
-const erroTechNotExists = {
-  error: 'TECHNOLOGY NOT EXISTS'
-}
-
-class UserHandle {
-  static async create(infos: any) {
+class UserHandler {
+  static async create(infos: IUser) {
     try {
       const user = await prisma.user.create({
         data: {
@@ -40,10 +29,13 @@ class UserHandle {
 
   static async list() {
     try {
-      const users = await prisma.user.findMany();
+      const users = await prisma.user.findMany({
+        include: {
+          techs: true
+        }
+      });
       console.log(users);
       
-
       return {
         status: 200,
         message: users
@@ -78,68 +70,9 @@ class UserHandle {
   }
 }
 
-export default UserHandle;
+export default UserHandler;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// function addUser(req: Request, res: Response) {
-//   const user = new User(req.body.name, req.body.username);
-
-//   users.push(user);
-//   return res.status(201).send(user.toJSON());
-// }
-
-// //MIDDLEWARES
-// function getUserByUsername(req: Request, res: Response, next: NextFunction) {
-//   const { username } = req.headers;
-
-//   const user = users.find(user => username === user.getUsername());
-
-//   if (user) {
-//     req.user = user;
-//     return next();
-//   } else {
-//     return res.status(404).send(erroUserNotExists);
-//   }
-// }
-
-// function checkExistsUserAccount(req: Request, res: Response, next: NextFunction) {
-//   const { username } = req.body;
-
-//   const exists = users.find(user => username === user.getUsername());
-//   if (exists) {
-//     return res.status(400).send(erroUserExists);
-//   } else {
-//     return next();
-//   }
-// }
 
 // function getTechByID(id: string, user: User) {  
 //   const tech = user.getTechs().find( tech => id === tech.getID());
@@ -149,16 +82,4 @@ export default UserHandle;
 //   } else {
 //     return false;
 //   }
-// }
-
-// //CONTROLLERS
-// function addUser(req: Request, res: Response) {
-//   const user = new User(req.body.name, req.body.username);
-
-//   users.push(user);
-//   return res.status(201).send(user.toJSON());
-// }
-
-// function listUsers(req: Request, res: Response): any {
-//   res.status(200).send(users);
 // }

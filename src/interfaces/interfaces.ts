@@ -9,4 +9,12 @@ interface IUser {
   username: string;
 }
 
-export { IResp, IUser }
+interface ITech {
+  id: string;
+  title: string;
+  studied: boolean;
+  deadline: Date;
+  createdAt: Date;
+}
+
+export { IResp, IUser, ITech }

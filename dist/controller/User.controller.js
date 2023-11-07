@@ -1,5 +1,5 @@
 "use strict";
-/// <reference path="../typings/custom.d.ts" />
+/// <reference path="../typings/express.d.ts" />
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -11,16 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const prisma_client_1 = require("../database/prisma.client");
-const erroUserExists = {
-    error: 'USER EXISTS'
-};
-const erroUserNotExists = {
-    error: 'USER NOT EXISTS'
-};
-const erroTechNotExists = {
-    error: 'TECHNOLOGY NOT EXISTS'
-};
-class UserHandle {
+class UserHandler {
     static create(infos) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -47,7 +38,11 @@ class UserHandle {
     static list() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const users = yield prisma_client_1.prisma.user.findMany();
+                const users = yield prisma_client_1.prisma.user.findMany({
+                    include: {
+                        techs: true
+                    }
+                });
                 console.log(users);
                 return {
                     status: 200,
@@ -85,32 +80,7 @@ class UserHandle {
         });
     }
 }
-exports.default = UserHandle;
-// function addUser(req: Request, res: Response) {
-//   const user = new User(req.body.name, req.body.username);
-//   users.push(user);
-//   return res.status(201).send(user.toJSON());
-// }
-// //MIDDLEWARES
-// function getUserByUsername(req: Request, res: Response, next: NextFunction) {
-//   const { username } = req.headers;
-//   const user = users.find(user => username === user.getUsername());
-//   if (user) {
-//     req.user = user;
-//     return next();
-//   } else {
-//     return res.status(404).send(erroUserNotExists);
-//   }
-// }
-// function checkExistsUserAccount(req: Request, res: Response, next: NextFunction) {
-//   const { username } = req.body;
-//   const exists = users.find(user => username === user.getUsername());
-//   if (exists) {
-//     return res.status(400).send(erroUserExists);
-//   } else {
-//     return next();
-//   }
-// }
+exports.default = UserHandler;
 // function getTechByID(id: string, user: User) {  
 //   const tech = user.getTechs().find( tech => id === tech.getID());
 //   if (tech) {
@@ -118,13 +88,4 @@ exports.default = UserHandle;
 //   } else {
 //     return false;
 //   }
-// }
-// //CONTROLLERS
-// function addUser(req: Request, res: Response) {
-//   const user = new User(req.body.name, req.body.username);
-//   users.push(user);
-//   return res.status(201).send(user.toJSON());
-// }
-// function listUsers(req: Request, res: Response): any {
-//   res.status(200).send(users);
 // }
